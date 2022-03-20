@@ -2,24 +2,22 @@ const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
-const Campground = require('./models/post.js');
-const Comment = require('./models/user.js');
-const seedDB = require('seedDB.js');
-
-seedDB();
+const Campground = require("./models/post.js");
+const Comment = require("./models/user.js");
+//const seedDB = require("./seedDB.js");
 
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({ extended: true }));
 mongoose.connect(
-  "",
+  "mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+1.3.0",
   { useNewUrlParser: true, useUnifiedTopology: true }
 );
+
+//seedDB();
 
 app.get("/", (req, res) => {
   res.render("landing");
 });
-
-
 
 // Campground.create(
 //   {
@@ -83,7 +81,7 @@ app.get("/campgrounds/new", (req, res) => {
 });
 
 app.get("/campgrounds/:id", (req, res) => {
-  Campground.findById(req.params.id, (err, foundCampground) => {
+  Campground.findById(req.params.id).populate("comments").exec((err, foundCampground) => {
     if (err) {
       console.log(err);
     } else {
