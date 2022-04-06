@@ -15,41 +15,80 @@ const data = [
   },
 ];
 
-function seedDB() {
+const temp_comment = {
+  text: "This place is great, but I wish there was internet",
+  author: "Peter",
+};
+
+// module.exports = () => {
+//   // Remove all campgrounds
+//   Campground.deleteMany({}, (err) => {
+//     if (err) {
+//       console.log(err);
+//     } else {
+//       console.log("removed campgrounds!");
+//       // Add a few campgrounds
+//       data.forEach((seed) => {
+//         Campground.create(seed, (err, campground) => {
+//           if (err) {
+//             console.log(err);
+//           } else {
+//             console.log("added a campground");
+//             // Add comment
+//             Comment.create(temp_comment, (err, comment) => {
+//               if (err) {
+//                 console.log(err);
+//               } else {
+//                 Campground.comments.push(comment);
+//                 Campground.save();
+//                 console.log("Created new comment");
+//               }
+//             });
+//           }
+//         });
+//       });
+//     }
+//   });
+// };
+
+async function seedDB() {
   // Remove all campgrounds
-  Campground.remove({}, (err) => {
-    if (err) {
-      console.log(err);
-    } else {
-      console.log("removed campgrounds!");
-      // Add a few campgrounds
-      data.forEach((seed) => {
-        Campground.create(seed, (err, campground) => {
-          if (err) {
-            console.log(err);
-          } else {
-            console.log("added a campground");
-            // Add comment
-            Comment.create(
-              {
-                text: "This place is great, but I wish there was internet",
-                author: "Peter",
-              },
-              (err, comment) => {
-                if (err) {
-                  console.log(err);
-                } else {
-                  Campground.comments.push(comment);
-                  Campground.save();
-                  console.log("Created new comment");
-                }
-              }
-            );
-          }
-        });
+  try {
+    await Campground.deleteMany({}, (err, db) => {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log("Removed campground!");
+      }
+    });
+  } catch {
+    console.log("Error removing campgrounds");
+  }
+
+  // Add a few campgrounds
+  try {
+    data.forEach((seed) => {
+      Campground.create(seed, (err, campground) => {
+        if (err) {
+          console.log(err);
+        } else {
+          console.log("added a campground");
+          // Add comment
+          Comment.create(temp_comment, (err, comment) => {
+            if (err) {
+              console.log(err);
+            } else {
+              campground.comments.push(comment);
+              campground.save();
+              console.log("Created new comment");
+            }
+          });
+        }
       });
-    }
-  });
+    });
+  } catch {
+    console.log("Error creating campgrounds");
+  }
 }
 
 module.exports = seedDB;

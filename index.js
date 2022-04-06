@@ -3,8 +3,7 @@ const app = express();
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const Campground = require("./models/post.js");
-const Comment = require("./models/user.js");
-//const seedDB = require("./seedDB.js");
+const seedDB = require("./seeds.js");
 
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -13,37 +12,12 @@ mongoose.connect(
   { useNewUrlParser: true, useUnifiedTopology: true }
 );
 
-//seedDB();
+// seedDB();
 
 app.get("/", (req, res) => {
   res.render("landing");
 });
 
-// Campground.create(
-//   {
-//     name: "Granite Hill",
-//     image:
-//       "https://images.unsplash.com/photo-1603738397297-a374b78e9626?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80",
-//   },
-//   (err, campground) => {
-//     if (err) {
-//       console.log(err);
-//     } else {
-//       console.log("Newly created campground");
-//       console.log(campground);
-//     }
-//   }
-// );
-
-// const campgrounds = [
-//   {
-//     name: "Salmon Creek",
-//   },
-//   {
-//     name: "Granite Hill",
-//     image:
-//       "https://images.unsplash.com/photo-1603738397297-a374b78e9626?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80",
-//   },
 //   {
 //     name: "Mountain Goat's Rest",
 //     image:
@@ -88,6 +62,10 @@ app.get("/campgrounds/:id", (req, res) => {
       res.render("show", { campground: foundCampground });
     }
   });
+});
+
+app.get("/campgrounds/:id/comments/new", (req, res) => {
+  res.render("comments/new", { campground_id: req.params.id });
 });
 
 app.listen(3000 || process.env.PORT, process.env.IP, () => {
